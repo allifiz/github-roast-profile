@@ -43,6 +43,73 @@ const mapWithConcurrency = async (items, limit, callback) => {
   return results;
 };
 
+const summarizeContributions = (calendar) => {
+  const days = (calendar.weeks || []).flatMap((week) => week.contributionDays || []);
+  const activeDays = days.filter((day) => day.contributionCount > 0);
+  let currentStreak = 0;
+  let longestStreak = 0;
+
+  for (const day of days) {
+    if (day.contributionCount > 0) {
+      currentStreak += 1;
+      longestStreak = Math.max(longestStreak, currentStreak);
+    } else {
+      currentStreak = 0;
+    }
+  }
+
+  const perMonth = new Map();
+  for (const day of activeDays) {
+    const month = day.date.slice(0, 7);
+    perMonth.set(month, (perMonth.get(month) || 0) + day.contributionCount);
+  }
+
+  const busiestMonth = [...perMonth.entries()]
+    .sort((a, b) => b[1] - a[1])[0];
+
+  return {
+    totalLastYear: calendar.totalContributions || 0,
+    activeDays: activeDays.length,
+    longestStreak,
+    maxContributionsInOneDay: Math.max(0, ...days.map((day) => day.contributionCount)),
+    busiestMonth: busiestMonth ? { month: busiestMonth[0], contributions: busiestMonth[1] } : null,
+  };
+};
+
+const parseTotalCommitCount = (linkHeader, fallback) => {
+  const lastPage = linkHeader?.match(/[?&]page=(\d+)>; rel="last"/)?.[1];
+  return lastPage ? Number(lastPage) * 100 : fallback;
+};
+
+const summarizeCommitPattern = (commits, totalCommits) => {
+  const perDay = new Map();
+
+  for (const commit of commits) {
+    const date = commit.commit?.author?.date || commit.commit?.committer?.date;
+    if (!date) continue;
+    const day = date.slice(0, 10);
+    perDay.set(day, (perDay.get(day) || 0) + 1);
+  }
+
+  const activeDates = [...perDay.keys()].sort();
+  const gaps = activeDates.slice(1).map((date, index) => {
+    const previous = new Date(`${activeDates[index]}T00:00:00Z`);
+    const current = new Date(`${date}T00:00:00Z`);
+    return Math.round((current - previous) / 86_400_000);
+  });
+
+  return {
+    totalCommits,
+    sampledCommits: commits.length,
+    activeCommitDays: activeDates.length,
+    maxCommitsInOneDay: Math.max(0, ...perDay.values()),
+    averageGapDays: gaps.length
+      ? Math.round((gaps.reduce((total, gap) => total + gap, 0) / gaps.length) * 10) / 10
+      : 0,
+    longestGapDays: Math.max(0, ...gaps),
+  };
+};
+
 export default async function handler(request, response) {
   if (request.method !== "GET") {
     return response.status(405).json({ message: "Method tidak diizinkan." });
@@ -60,29 +127,63 @@ export default async function handler(request, response) {
     return response.status(400).json({ message: "Username GitHub-nya nggak valid." });
   }
 
-  const github = async (path) => {
-    const result = await fetch(`${GITHUB_API}${path}`, {
-      headers: {
-        Accept: "application/vnd.github+json",
-        Authorization: `Bearer ${token}`,
-        "X-GitHub-Api-Version": "2022-11-28",
-      },
+  const githubHeaders = {
+    Accept: "application/vnd.github+json",
+    Authorization: `Bearer ${token}`,
+    "X-GitHub-Api-Version": "2022-11-28",
+  };
+
+  const github = async (path) =>
+    fetch(`${GITHUB_API}${path}`, { headers: githubHeaders });
+
+  const getContributionSummary = async () => {
+    const contributionResponse = await fetch(`${GITHUB_API}/graphql`, {
+      method: "POST",
+      headers: { ...githubHeaders, "Content-Type": "application/json" },
+      body: JSON.stringify({
+        query: `query Contributions($login: String!) {
+          user(login: $login) {
+            contributionsCollection {
+              contributionCalendar {
+                totalContributions
+                weeks {
+                  contributionDays {
+                    date
+                    contributionCount
+                  }
+                }
+              }
+            }
+          }
+        }`,
+        variables: { login: username },
+      }),
     });
 
-    return result;
+    if (!contributionResponse.ok) return null;
+
+    const data = await contributionResponse.json();
+    const calendar = data.data?.user?.contributionsCollection?.contributionCalendar;
+    return calendar ? summarizeContributions(calendar) : null;
   };
 
   const inspectRepo = async (repo) => {
     const base = `/repos/${repo.full_name}`;
-    const [readmeResponse, treeResponse, languagesResponse] = await Promise.all([
+    const [readmeResponse, treeResponse, languagesResponse, commitsResponse] = await Promise.all([
       github(`${base}/readme`),
       github(`${base}/git/trees/${encodeURIComponent(repo.default_branch || "main")}?recursive=1`),
       github(`${base}/languages`),
+      github(`${base}/commits?author=${encodeURIComponent(username)}&per_page=100`),
     ]);
 
     const readme = readmeResponse.ok ? await readmeResponse.json() : null;
     const tree = treeResponse.ok ? await treeResponse.json() : { tree: [] };
     const languages = languagesResponse.ok ? await languagesResponse.json() : {};
+    const commits = commitsResponse.ok ? await commitsResponse.json() : [];
+    const commitPattern = summarizeCommitPattern(
+      commits,
+      parseTotalCommitCount(commitsResponse.headers.get("link"), commits.length),
+    );
     const files = (tree.tree || []).filter((item) => item.type === "blob").map((item) => item.path);
     const folders = [
       ...new Set(
@@ -109,13 +210,15 @@ export default async function handler(request, response) {
       folders,
       filePaths: files.slice(0, 55),
       languages: Object.keys(languages),
+      commitPattern,
     };
   };
 
   try {
-    const [profileResponse, reposResponse] = await Promise.all([
+    const [profileResponse, reposResponse, contributions] = await Promise.all([
       github(`/users/${encodeURIComponent(username)}`),
       github(`/users/${encodeURIComponent(username)}/repos?per_page=100&sort=updated`),
+      getContributionSummary(),
     ]);
 
     if (profileResponse.status === 404) {
@@ -159,6 +262,7 @@ export default async function handler(request, response) {
         public_repos: profile.public_repos,
       },
       repositories: { items: inspected, fileCount },
+      contributions,
     });
   } catch (error) {
     console.error("[api/scan] Error saat membongkar GitHub", {
