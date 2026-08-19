@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en">
+<html lang="id">
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>GitHub Roast Profile</title>
@@ -10,7 +10,7 @@
 <body><nav class="shell"><a class="brand" href="#"><i>◈</i> GITHUB ROAST</a><a class="navlink" href="#how">Cara kerja <b>↗</b></a></nav>
 <section class="hero shell"><div class="signal"><i class="dot"></i>Pemeriksaan kode tanpa basa-basi</div><h1>Profil GitHub-mu<br><em>minta dihajar.</em></h1><p class="lede">Masukkan username GitHub. Kami baca data publiknya, lalu kasih roast panas yang tetap punya solusi.</p><form class="form" id="form"><label for="username">github.com/</label><input id="username" placeholder="octocat" autocomplete="off"><button>Hajar profilku →</button></form><p class="notice" id="notice">Cuma data publik GitHub. Tanpa login, tanpa drama, tanpa ampun.</p></section>
 <section class="result shell" id="result"><div class="head"><div class="person"><img id="avatar" alt=""><div><p>Yang lagi dihajar <a id="profileLink" target="_blank" rel="noreferrer"></a></p><h2 id="name"></h2></div></div><span class="verified">● DATA SUDAH DIBONGKAR</span></div><div class="grid"><article class="score"><p>LEVEL KEGOSONGAN</p><strong><span id="score">0</span><small>/100</small></strong><div class="meter"><i id="meter"></i></div><span>Masih bisa diselamatkan</span></article><article class="words"><p class="eyebrow" id="title"></p><blockquote id="line"></blockquote><p class="nudge"><b>Beresin begini:</b> <span id="nudge"></span></p></article></div><div class="stats" id="stats"></div><button class="again" onclick="document.querySelector('#username').focus()">Hajar profil lain →</button></section>
-<section class="how shell" id="how"><p class="eyebrow">BUKAN FITNAH BERDASAR PERASAAN</p><h2>Semua pakai bukti.</h2><div class="steps"><article><span>01</span><h3>Data publik doang</h3><p>Repo, bintang, fork, bahasa pemrograman, dan umur akun dari API publik GitHub.</p></article><article><span>02</span><h3>Mesin roast lokal</h3><p>Statistik profilmu diubah menjadi sindiran yang spesifik, bukan omongan ngawang.</p></article><article><span>03</span><h3>Abis dihajar, dibenerin</h3><p>Setiap roast kasih satu langkah nyata supaya profilmu nggak cuma jadi pajangan.</p></article></div></section><footer class="shell"><span>GitHub Roast Profile</span><span>Dibuat buat developer yang nggak gampang nangis.</span></footer>
+<section class="how shell" id="how"><p class="eyebrow">BUKAN FITNAH BERDASAR PERASAAN</p><h2>Semua pakai bukti.</h2><div class="steps"><article><span>01</span><h3>Data publik doang</h3><p>Repo, bintang, fork, bahasa pemrograman, dan umur akun dari API publik GitHub.</p></article><article><span>02</span><h3>Mesin roast AI</h3><p>Statistik profilmu diubah menjadi sindiran yang spesifik, bukan omongan ngawang.</p></article><article><span>03</span><h3>Abis dihajar, dibenerin</h3><p>Setiap roast kasih satu langkah nyata supaya profilmu nggak cuma jadi pajangan.</p></article></div></section><footer class="shell"><span>GitHub Roast Profile</span><span>Dibuat buat developer yang nggak gampang nangis.</span></footer>
 <script>
 const $=s=>document.querySelector(s);
 $('#form').onsubmit=async e=>{
@@ -31,10 +31,10 @@ $('#form').onsubmit=async e=>{
     const age=Math.max(1,new Date().getFullYear()-new Date(profile.created_at).getFullYear());
     const languages=[...new Set(repos.map(repo=>repo.language).filter(Boolean))].slice(0,10);
     const score=Math.min(99,Math.max(18,Math.round(32+active*4+stars*.7+profile.followers*.45)));
-    notice.textContent='Gemini lagi nyari bahan buat ngegas…';
+    notice.textContent='OpenRouter lagi nyari bahan buat ngegas…';
     const aiResponse=await fetch('/api/roast',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({profile:{login:profile.login,name:profile.name,bio:profile.bio,followers:profile.followers,publicRepos:profile.public_repos,accountAgeYears:age},repositories:{total:repos.length,active,stars,forks,languages}})});
     const roast=await aiResponse.json();
-    if(!aiResponse.ok||!roast.title||!roast.line||!roast.nudge)throw Error(roast.message||'Gemini gagal ngeroast. Coba lagi.');
+    if(!aiResponse.ok||!roast.title||!roast.line||!roast.nudge)throw Error(roast.message||'AI gagal ngeroast. Coba lagi.');
     $('#avatar').src=profile.avatar_url;$('#profileLink').href=profile.html_url;$('#profileLink').textContent='@'+profile.login+' ↗';$('#name').textContent=profile.name||profile.login;$('#score').textContent=score;$('#meter').style.width=score+'%';$('#title').textContent=roast.title;$('#line').textContent='“'+roast.line+'”';$('#nudge').textContent=roast.nudge;
     $('#stats').innerHTML=[['Repo publik',profile.public_repos],['Bintang dikumpulkan',stars],['Repo difork',forks],['Sudah ngoding',age+' thn']].map(stat=>'<div><strong>'+stat[1]+'</strong><span>'+stat[0]+'</span></div>').join('');
     $('#result').style.display='block';notice.textContent='Cuma data publik GitHub. Tanpa login, tanpa drama, tanpa ampun.';$('#result').scrollIntoView({behavior:'smooth',block:'start'});
