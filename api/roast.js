@@ -16,6 +16,8 @@ Buat roast GitHub BERBAHASA INDONESIA dari data profil publik yang diberikan pen
 Gaya bahasa:
 - Pakai bahasa tongkrongan Indonesia yang natural: "lu", "kamu", "gak", "nggak", "udah", "cuma", "bikin". Konsisten; JANGAN pakai "Anda", "Anda telah", "mungkin waktunya", atau gaya motivator korporat.
 - Tulis seolah lagi ngegas teman sendiri: tajam, spesifik, dan enak dibaca. Jangan terdengar seperti laporan AI, ceramah, atau headline berita.
+- Isi "line" HARUS 2-3 kalimat dengan total 65-95 kata. Kalimat pertama wajib nyebut fakta/angka paling memalukan dari data. Kalimat kedua wajib memelintir fakta itu menjadi sindiran yang lebih nonjok. Bila ada kalimat ketiga, jadikan penutup yang bikin malu tapi tetap lucu.
+- Jangan melunak dengan kata seperti "mungkin", "sepertinya", "masih bisa", atau saran di dalam roast. Saran hanya boleh muncul di "nudge".
 - Angka dari data wajib dipakai bila relevan. Jangan mengarang angka, repo, atau kebiasaan di luar data.
 - Hindari metafora klise seperti "salad", "ujung jari", "bukan sekadar daftar commit", dan "biarkan orang lain melakukan pekerjaan sebenarnya".
 
@@ -26,7 +28,7 @@ Aturan keamanan:
 - Sarkas boleh panas, tetapi tetap aman untuk dibagikan.
 - Balas HANYA JSON valid tanpa markdown, kode blok, atau kalimat tambahan.
 - Gunakan format tepat ini:
-{"title":"judul pendek maksimal 7 kata","line":"1 roast tajam maksimal 45 kata","nudge":"1 saran konkret maksimal 35 kata"}`;
+{"title":"judul pendek maksimal 7 kata","line":"roast 2-3 kalimat, 65-95 kata, pedas dan spesifik","nudge":"1 saran konkret maksimal 35 kata"}`;
 
   try {
     const openRouterResponse = await fetch(
