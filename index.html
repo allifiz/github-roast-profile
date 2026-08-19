@@ -15,27 +15,6 @@
 <footer class="shell"><span>GitHub Roast Profile</span><span>Dibuat buat developer yang nggak gampang nangis.</span></footer>
 <script>
 const $=s=>document.querySelector(s);
-const github=url=>fetch('https://api.github.com'+url,{headers:{Accept:'application/vnd.github+json'}});
-const clip=(value,size)=>String(value||'').replace(/\s+/g,' ').trim().slice(0,size);
-const decodeReadme=content=>{try{return decodeURIComponent(Array.from(atob(content.replace(/\n/g,'')),c=>'%'+c.charCodeAt(0).toString(16).padStart(2,'0')).join(''))}catch{return ''}};
-const suspiciousness=repo=>{
-  const stale=Math.floor((Date.now()-new Date(repo.pushed_at).getTime())/86400000);
-  return (repo.stargazers_count===0?28:0)+(repo.description?0:16)+(repo.language?0:12)+(repo.size===0?25:0)+(repo.archived?16:0)+(stale>730?20:stale>365?10:0)+(/test|latihan|coba|baru|tugas|belajar/i.test(repo.name)?10:0);
-};
-async function inspectRepo(repo){
-  const base='/repos/'+repo.full_name;
-  const [readmeResponse,treeResponse,languagesResponse]=await Promise.all([
-    github(base+'/readme'),
-    github(base+'/git/trees/'+encodeURIComponent(repo.default_branch||'main')+'?recursive=1'),
-    github(base+'/languages')
-  ]);
-  const readme=readmeResponse.ok?await readmeResponse.json():null;
-  const tree=treeResponse.ok?await treeResponse.json():{tree:[]};
-  const languages=languagesResponse.ok?await languagesResponse.json():{};
-  const files=(tree.tree||[]).filter(item=>item.type==='blob').map(item=>item.path);
-  const folders=[...new Set((tree.tree||[]).filter(item=>item.type==='tree').map(item=>item.path.split('/')[0]))].slice(0,12);
-  return {name:repo.name,url:repo.html_url,description:clip(repo.description,300),primaryLanguage:repo.language,stars:repo.stargazers_count,forks:repo.forks_count,openIssues:repo.open_issues_count,sizeKb:repo.size,archived:repo.archived,lastPushedAt:repo.pushed_at,readmePresent:Boolean(readme),readmeSnippet:clip(readme?decodeReadme(readme.content):'',900),fileCount:files.length,folders,filePaths:files.slice(0,55),languages:Object.keys(languages)};
-}
 $('#form').onsubmit=async e=>{
   e.preventDefault();
   const username=$('#username').value.trim().replace(/^@/,'');
@@ -43,15 +22,13 @@ $('#form').onsubmit=async e=>{
   const button=$('#form button'),notice=$('#notice');
   button.disabled=true;button.textContent='Lagi nyari repo bermasalah...';notice.className='notice';notice.textContent='Lagi menarik data publik GitHub…';
   try{
-    const profileResponse=await github('/users/'+encodeURIComponent(username));
-    if(!profileResponse.ok)throw Error(profileResponse.status===404?'Akun GitHub-nya nggak ketemu. Jangan-jangan username sendiri juga lupa?':'GitHub lagi ngambek. Coba lagi sebentar lagi.');
-    const profile=await profileResponse.json();
-    const reposResponse=await github('/users/'+encodeURIComponent(username)+'/repos?per_page=100&sort=updated');
-    const repos=reposResponse.ok?await reposResponse.json():[];
-    const targets=repos.filter(repo=>!repo.fork).sort((a,b)=>suspiciousness(b)-suspiciousness(a)).slice(0,6);
-    if(!targets.length)throw Error('Nggak ada repo non-fork yang bisa dibongkar.');
-    notice.textContent='Lagi baca README dan struktur file '+targets.length+' repo pilihan…';
-    const inspected=await Promise.all(targets.map(inspectRepo));
+    notice.textContent='Lagi membongkar repo pilihan di server…';
+    const scanResponse=await fetch('/api/scan?username='+encodeURIComponent(username));
+    const scan=await scanResponse.json();
+    if(!scanResponse.ok)throw Error(scan.message||'Scanner GitHub gagal jalan.');
+    const {profile,repositories}=scan;
+    const targets=repositories.items;
+    const inspected=repositories.items;
     notice.textContent='Lagi ngerangkai semua temuan jadi satu vonis…';
     const aiResponse=await fetch('/api/roast',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({profile:{login:profile.login,name:profile.name,followers:profile.followers},repositories:{items:inspected}})});
     const payload=await aiResponse.json();
