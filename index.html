@@ -6,6 +6,49 @@
 <meta name="description" content="Roast AI untuk repo GitHub publik yang paling mencurigakan.">
 <style>
 :root{--ink:#f5f3ed;--muted:#9d9b94;--acid:#d8ff39;--pink:#ff4e8a;--line:#ffffff24;--bg:#111210}*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--bg);color:var(--ink);font-family:Arial,sans-serif;background-image:linear-gradient(#ffffff08 1px,transparent 1px),linear-gradient(90deg,#ffffff08 1px,transparent 1px);background-size:28px 28px}.shell{width:min(1120px,calc(100% - 48px));margin:auto}nav{height:86px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--line)}a{color:inherit}.brand{font:700 13px monospace;letter-spacing:.11em;text-decoration:none}.brand i,.navlink b{color:var(--acid);font-style:normal;font-size:20px}.navlink{text-decoration:none;font-size:13px}.hero{text-align:center;padding:106px 0 100px}.signal,.eyebrow{color:var(--acid);font:700 11px monospace;letter-spacing:.15em;text-transform:uppercase}.dot{display:inline-block;width:7px;height:7px;margin-right:8px;border-radius:50%;background:var(--acid);box-shadow:0 0 14px var(--acid)}h1{margin:24px auto 22px;max-width:900px;font-size:clamp(48px,8vw,104px);line-height:.93;letter-spacing:-.075em}h1 em{color:var(--acid);font-family:Georgia,serif;font-weight:400}.lede{max-width:580px;margin:0 auto 31px;color:var(--muted);font-size:17px;line-height:1.55}.form{max-width:650px;margin:auto;padding:7px;display:flex;gap:10px;align-items:center;background:#20211e;border:1px solid #393b35;border-radius:10px}.form label{padding-left:15px;color:#aaa;font:14px monospace}.form input{flex:1;min-width:0;border:0;outline:0;background:transparent;color:#fff;font:17px monospace}.form button,.again{border:0;border-radius:6px;padding:15px 18px;background:var(--acid);color:#171810;font-weight:800;cursor:pointer}.form button:disabled{opacity:.7}.notice{margin:14px 0 0;color:#696963;font-size:12px}.error{color:#ff9bbb}.result{display:none;border-top:1px solid var(--line);padding:62px 0 96px}.head{display:flex;justify-content:space-between;align-items:center;margin-bottom:25px}.person{display:flex;gap:13px;align-items:center}.person img{width:48px;height:48px;border-radius:50%}.person p{margin:0;color:var(--muted);font:11px monospace;text-transform:uppercase;letter-spacing:.12em}.person a{color:var(--acid);text-decoration:none}.person h2{margin:3px 0 0;font-size:19px}.verified{color:var(--acid);font:10px monospace}.stats{display:grid;grid-template-columns:repeat(4,1fr);border:1px solid var(--line);margin-bottom:18px}.stats div{padding:22px 28px;border-right:1px solid var(--line)}.stats strong{display:block;font-size:23px}.stats span{color:var(--muted);font-size:12px}.roast-list{border:1px solid var(--line);background:linear-gradient(110deg,#20221b,#1d1d1a)}.roast-card{padding:34px}.roast-card h3{margin:12px 0 22px;font-size:clamp(30px,4vw,48px);line-height:1.02;letter-spacing:-.06em}.roast-card blockquote{margin:0;font-family:Georgia,serif;font-size:clamp(24px,3vw,37px);line-height:1.18}.nudge{margin:26px 0 0;border-left:2px solid var(--acid);padding-left:13px;color:#d1d0c9;font-size:14px;line-height:1.45}.nudge b{color:var(--acid)}.again{display:block;margin:25px auto 0;background:transparent;border:1px solid #62645b;color:var(--ink)}.how{padding:85px 0;border-top:1px solid var(--line)}.how h2{margin:12px 0 36px;font-size:clamp(38px,6vw,68px);letter-spacing:-.06em}.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}.steps article{padding:23px;border-top:2px solid var(--acid);background:#191a18}.steps span{color:var(--acid);font:12px monospace}.steps h3{margin:31px 0 9px}.steps p{margin:0;color:var(--muted);font-size:14px;line-height:1.5}footer{padding:26px 0 40px;border-top:1px solid var(--line);color:var(--muted);display:flex;justify-content:space-between;font:11px monospace}@media(max-width:700px){.shell{width:min(100% - 32px,1120px)}nav{height:68px}.navlink{display:none}.hero{padding:75px 0}.form label{display:none}.form input{padding-left:9px;font-size:14px}.form button{padding:13px 12px;font-size:12px}.stats{grid-template-columns:repeat(2,1fr)}.stats div:nth-child(2){border-right:0}.roast-card{padding:25px 21px}.steps{grid-template-columns:1fr;gap:10px}footer{gap:18px;flex-direction:column}}
+
+/* Mobile-first touch and reading improvements */
+button,input{min-height:44px}button{touch-action:manipulation}.form input:focus-visible,.form button:focus-visible,.again:focus-visible,a:focus-visible{outline:2px solid var(--acid);outline-offset:3px}.person a,.roast-card h3,blockquote,.nudge{overflow-wrap:anywhere}
+@media(max-width:700px){
+  .shell{width:min(100% - 32px,1120px)}
+  nav{height:64px}
+  .hero{padding:64px 0 70px}
+  h1{margin:18px auto;font-size:clamp(42px,13vw,66px);line-height:.91}
+  .lede{margin-bottom:25px;font-size:16px}
+  .notice{min-height:34px;line-height:1.45}
+  .head{align-items:flex-start;gap:14px;flex-direction:column}
+  .person{max-width:100%}
+  .person h2{font-size:18px;overflow-wrap:anywhere}
+  .verified{font-size:10px}
+  .stats{margin-bottom:14px}
+  .stats div{padding:18px 16px}
+  .stats div:nth-child(even){border-right:0}
+  .stats div:nth-child(-n+2){border-bottom:1px solid var(--line)}
+  .stats strong{font-size:20px}
+  .roast-card{padding:26px 21px}
+  .roast-card h3{font-size:clamp(29px,9vw,42px);line-height:1.04}
+  .roast-card blockquote{font-size:clamp(22px,6.6vw,29px);line-height:1.28}
+  .nudge{margin-top:23px;font-size:14px}
+  .again{width:100%;min-height:50px;margin-top:18px}
+  .how{padding:64px 0}
+  .how h2{font-size:clamp(38px,12vw,55px);line-height:.98}
+  .steps article{padding:22px}
+  footer{padding:24px 0 32px;line-height:1.5}
+}
+@media(max-width:520px){
+  .form{padding:8px;gap:6px;flex-direction:column;align-items:stretch}
+  .form label{display:none}
+  .form input{min-height:50px;padding:0 12px;font-size:16px}
+  .form button{width:100%;min-height:50px;padding:14px 16px;font-size:14px}
+  .signal,.eyebrow{letter-spacing:.11em}
+}
+@media(max-width:360px){
+  .shell{width:calc(100% - 24px)}
+  .hero{padding-top:52px}
+  .stats div{padding:15px 12px}
+  .stats strong{font-size:18px}
+  .roast-card{padding:22px 17px}
+}
 </style></head>
 <body>
 <nav class="shell"><a class="brand" href="#"><i>◈</i> GITHUB ROAST</a><a class="navlink" href="#how">Cara kerja <b>↗</b></a></nav>
