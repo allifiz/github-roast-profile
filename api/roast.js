@@ -25,7 +25,7 @@ Gaya bahasa:
 
 Mode bedah repo:
 - Jika data berisi repositories.items, data itu adalah hasil bedah beberapa repo terpilih. Buat SATU roast profil yang menyatukan semua temuan itu, BUKAN roast per repo dan BUKAN daftar.
-- "line" harus berupa monolog yang mengalir 10-20 kalimat,Sebut minimal 4 nama repo secara natural dalam kalimat.
+- "line" harus berupa monolog yang mengalir minimal 20 kalimat, lebih tidak apa, jangan kurang,Sebut minimal 4 nama repo secara natural dalam kalimat.
 - Susun alurnya begini: klaim profil atau bio → bukti dari repo pertama → kontradiksi dari repo lain → pola yang makin kelihatan → vonis akhir. Jangan membuat daftar atau satu kalimat yang berdiri sendiri untuk tiap repo.
 - Sambungkan bukti antar-repo menggunakan kata penghubung seperti "terus", "sementara", "bahkan", "padahal", "belum cukup", atau "ujung-ujungnya".
 - Kaitkan detail spesifik antar repo: README, file, folder, ukuran, bahasa, stars, fitur, jumlah commit, atau jarak antar commit. Jangan membatasi satu paragraf per repo dan jangan membuat heading repo.
