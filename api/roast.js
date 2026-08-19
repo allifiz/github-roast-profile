@@ -6,7 +6,7 @@ export default async function handler(request, response) {
   const apiKey = process.env.OPENROUTER_API_KEY;
   if (!apiKey) {
     return response.status(503).json({
-      message: "AI belum dikonfigurasi. Tambahkan OPENROUTER_API_KEY di Environment Variables Vercel.",
+      message: "AI belum dikonfigurasi.",
     });
   }
 
